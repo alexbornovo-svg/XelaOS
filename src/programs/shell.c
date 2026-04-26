@@ -1,6 +1,11 @@
 #include "types.h"
 #include "kstdio.h"
 #include "ata_pio.h"
+#include "string.h"
+#include "disk.h"
+#include "cpu.h"
+#include "time.h"
+#include "random.h"
 
 int shell(int line)
 {
@@ -27,8 +32,7 @@ int shell(int line)
             char brand[49];
             cpu_brand(brand);
 
-            line = kwrite("CPU Model and Brand:", line, WHITE);
-            line = kwrite(brand, line, LIGHT_RED);
+            line = kprintf(line, LIGHT_RED, "CPU: %s", brand);
             line++;
 
             uint32_t f_mb, t_mb;
@@ -40,11 +44,7 @@ int shell(int line)
 
             char disk_buf[VGA_WIDTH + 1];
             disk_buf[0] = '\0';
-            kstrcat(disk_buf, "Free space: ");
-            kstrcat(disk_buf, b1);
-            kstrcat(disk_buf, " MB / ");
-            kstrcat(disk_buf, b2);
-            kstrcat(disk_buf, " MB");
+            line = kprintf(line, 0x07, "Disk: %u MB free of %u MB", f_mb, t_mb);
 
             line = kwrite(disk_buf, line, WHITE);
             line++;
@@ -74,6 +74,18 @@ int shell(int line)
 
             }
         }
+        else if (startswith(cmd, "time"))
+        {
+            cmos_time_t t;
+            cmos_read(&t);
+            line = kprintf(line, LIGHT_GREY, "Date: %u/%u/20%u", t.day, t.month, t.year);
+            line = kprintf(line, LIGHT_GREY, "Time: %u:%u:%u",   t.hours, t.minutes, t.seconds);
+        }
+        else if (startswith(cmd, "random"))
+        {
+            uint32_t rnd = krand();
+            line = kprintf(line, LIGHT_GREY, "Random: %u", rnd);
+        }
         else
         {
             line = kwrite("ERROR: cmd not found", line, RED);
@@ -82,16 +94,3 @@ int shell(int line)
 
     return 0;
 }
-
-/*
-    uchar cmd[256] = {0};
-    uint line = 0;
-    
-    kclear();
-    line = kwrite("Welcome to the kernel", line, WHITE);
-
-    while (1)
-    {
-        line = kinput("> ", line, WHITE, cmd, 256);
-    }
-*/

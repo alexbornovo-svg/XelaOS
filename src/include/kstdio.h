@@ -30,14 +30,4 @@ void kclear();
 uint kinput(const char *message, uint line, char colour, char *buf, uint buf_size);
 void k_scroll();
 
-void cpu_brand(char *buf);
-void itoa(uint32_t n, char *str);
-void get_disk_usage(ext2_superblock_t *sb, uint32_t *free_mb, uint32_t *total_mb);
-
-void kstrcat(char *dst, const char *src);
-void kmemcpy(uint8_t *dst, const uint8_t *src, uint32_t n);
-
-int startswith(const char *str, const char *prefix);
-const char *skipword(const char *str);
-
 #endif
