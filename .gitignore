@@ -1,2 +1,11 @@
-build/
-.vscode/
+# Output di compilazione
+./build/
+iso/boot/kernel.elf
+
+# Editor
+./.vscode/
+
+# File temporanei
+*.o
+*.elf
+*.iso

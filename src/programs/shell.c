@@ -4,9 +4,6 @@
 int shell(int line)
 {
     uchar cmd[256] = {0};
-
-    kclear();
-
     while(1)
     {
         line = kinput("> ", line, WHITE, cmd, 256);
