@@ -4,13 +4,15 @@
 #include "random.h"
 #include "ata_pio.h"
 #include "time.h"
+#include "gdt.h"
 #include "idt.h"
 
 void k_main()
 {
     uint line = 0;
+    gdt_init();
     kclear();
-    idt_init();
+    idt_init(); // NON FUNZIONA PER ORA
 
     cmos_time_t t;
     cmos_read(&t);

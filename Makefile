@@ -4,8 +4,8 @@ LD      = ld
 
 # Flags
 ASFLAGS = -f elf32
-CFLAGS  = -m32 -ffreestanding -fno-builtin -nostdlib -fno-stack-protector -Wall -Wextra -Isrc/include
-LDFLAGS = -m elf_i386 -T linker.ld
+CFLAGS  = -m32 -ffreestanding -fno-builtin -nostdlib -fno-stack-protector -Wall -Wextra -Isrc/include -O0 -mno-sse -mno-sse2 -Wall -g
+LDFLAGS = -m elf_i386 -T linker.ld -z noexecstack
 
 # Directories
 BUILD_DIR = build
@@ -71,14 +71,18 @@ run_debug: $(ISO) $(DISK)
 		-drive file=build/disk.img,format=raw,index=1,media=disk \
 		-boot d \
 		-display gtk \
-		-s -S \
-		-M accel=tcg,smm=off -d int -no-reboot -no-shutdown -D qemu_log.txt
+		-M accel=tcg,smm=off \
+		-no-reboot -no-shutdown \
+		-s -S
 
 run: $(ISO) $(DISK)
 	qemu-system-i386 \
 		-drive file=$(ISO),format=raw,index=0,media=cdrom \
 		-drive file=$(DISK),format=raw,index=1,media=disk \
-		-boot d
+		-boot d \
+		-M accel=tcg,smm=off \
+		-no-reboot \
+		-no-shutdown
 
 
 clean:

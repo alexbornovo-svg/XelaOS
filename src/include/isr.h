@@ -3,6 +3,14 @@
 
 #include "types.h"
 
-uint8_t kbd_read(void);
+typedef struct {
+    uint32_t edi, esi, ebp, esp;
+    uint32_t ebx, edx, ecx, eax;
+    uint32_t int_no, err_code;
+    uint32_t eip, cs, eflags, useresp, ss;
+} __attribute__((packed)) registers_t;
+
+void isr_handler(registers_t *regs);
+void irq_handler(registers_t *regs);
 
 #endif

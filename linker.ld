@@ -1,19 +1,18 @@
 ENTRY(loader)
-
 SECTIONS {
     . = 1M;
 
-    .text : {
+    .text ALIGN(4096) : {
         *(.multiboot)
-        *(.text)
+        *(.text*)
     }
 
-    .data : {
+    .data ALIGN(4096) : {
         *(.data)
-        *(.rodata)
+        *(.rodata*)
     }
 
-    .bss : {
+    .bss ALIGN(4096) : {
         *(.bss)
         *(COMMON)
     }

@@ -2,6 +2,7 @@
 #include "kstdio.h"
 #include "kprintf.h"
 #include "kbd.h"
+#include "isr.h"
 #include "io.h"
 
 static idt_entry_t idt[256];
@@ -21,17 +22,6 @@ void idt_set_gate(uint8_t n, uint32_t handler, uint16_t selector, uint8_t flags)
     idt[n].selector = selector;
     idt[n].zero = 0;
     idt[n].flags = flags;
-}
-
-void keyboard_handler_main() {
-    uchar scancode = inb(0x60);
-    
-    // Check if buffer is full
-    uint8_t next_head = (kbd_head + 1) % KBD_BUFFER_SIZE;
-    if (next_head != kbd_tail) {
-        kbd_buffer[kbd_head] = scancode;
-        kbd_head = next_head;
-    }
 }
 
 void idt_init()
@@ -105,15 +95,16 @@ void idt_init()
     idt_set_gate(46, (uint32_t)irq14, 0x08, 0x8E);
     idt_set_gate(47, (uint32_t)irq15, 0x08, 0x8E);
 
-    port_byte_out(0x21, 0xFD);
-
+    /*
     kprintf(23, WHITE, "idt_entry size: %u", sizeof(idt_entry_t));
     kprintf(24, 0x07, "IDT limit: %u  base: %X", idt_ptr.limit, idt_ptr.base);
     kprintf(19, WHITE, "IDT addr: %X", &idt);
     kprintf(20, WHITE, "IDT_PTR addr: %X", &idt_ptr);
     kprintf(21, WHITE, "IDT base: %X", idt_ptr.base);
     kprintf(22, WHITE, "IDT limit: %u", idt_ptr.limit);
-
+    */
     __asm__ volatile ("lidt (%0)" : : "r" (&idt_ptr));
     __asm__ volatile ("sti");
+    port_byte_out(0x21, 0xFD);
+    port_byte_out(0xA1, 0xFF);
 }

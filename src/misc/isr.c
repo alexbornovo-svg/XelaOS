@@ -31,23 +31,3 @@ void isr_handler(registers_t *regs)
     kprintf(1, 0x4F, "EIP: %X  ERR: %X", regs->eip, regs->err_code);
     __asm__ volatile ("cli; hlt");
 }
-
-void irq_handler(registers_t *regs)
-{
-    if (regs->int_no == 33)
-    {
-        uint8_t scancode = inb(0x60);
-        if (!(scancode & 0x80))
-        {
-            uint8_t next = (kbd_head + 1) % KBD_BUFFER_SIZE;
-            if (next != kbd_tail)
-            {
-                kbd_buffer[kbd_head] = scancode;
-                kbd_head = next;
-            }
-        }
-    }
-    if (regs->int_no >= 40)
-        port_byte_out(0xA0, 0x20);
-    port_byte_out(0x20, 0x20);
-}

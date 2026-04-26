@@ -85,9 +85,15 @@ char kbd_char_input(void)
 
 void kbd_update(void)
 {
-    char c = kbd_poll();
-    if (c)
-    {
+    if (kbd_head == kbd_tail) return;
+
+    uint8_t sc = kbd_buffer[kbd_tail];
+    kbd_tail = (kbd_tail + 1) % KBD_BUFFER_SIZE;
+
+    if (sc & 0x80) return;
+
+    char c = kbd_scancode_to_ascii(sc);
+    if (c) {
         char str[2] = {c, '\0'};
         cursor_line = kwrite(str, cursor_line, WHITE);
     }
@@ -95,11 +101,16 @@ void kbd_update(void)
 
 uchar kbd_read(void)
 {
-    while (kbd_head == kbd_tail)
+    while (1)
     {
+        __asm__ volatile ("cli");
+        if (kbd_head != kbd_tail) break;
+        __asm__ volatile ("sti");
         __asm__ volatile ("hlt");
     }
+
     uint8_t sc = kbd_buffer[kbd_tail];
     kbd_tail = (kbd_tail + 1) % KBD_BUFFER_SIZE;
+    __asm__ volatile ("sti");
     return sc;
 }
