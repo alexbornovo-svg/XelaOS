@@ -1,6 +1,7 @@
 #include "types.h"
 #include "kbd.h"
 #include "kstdio.h"
+#include "string.h"
 #include "ata_pio.h"
 
 ext2_superblock_t *global_sb = 0;

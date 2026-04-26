@@ -1,13 +1,8 @@
 #include "kprintf.h"
 #include "kstdio.h"
 #include "types.h"
-
-static uint _kstrlen(const char *s)
-{
-    uint n = 0;
-    while (s[n]) n++;
-    return n;
-}
+#include "string.h"
+#include "string.h"
 
 static uint _append_str(char *buf, uint pos, uint max, const char *s)
 {

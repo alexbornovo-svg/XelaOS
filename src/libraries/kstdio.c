@@ -1,5 +1,6 @@
 #include "types.h"
 #include "kstdio.h"
+#include "isr.h"
 #include "kbd.h"
 
 void port_byte_out(unsigned short port, unsigned char data)
@@ -7,7 +8,20 @@ void port_byte_out(unsigned short port, unsigned char data)
     __asm__ volatile ("outb %0, %1" : : "a"(data), "Nd"(port));
 }
 
-uint kwrite(char *message, uint line, uchar colour)
+void kscroll()
+{
+    char *vidmem = VGA_MEM;
+    unsigned int i;
+    for (i = 0; i < (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i++)
+        vidmem[i] = vidmem[i + VGA_WIDTH * 2];
+    for (i = (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i < VGA_HEIGHT * VGA_WIDTH * 2; i += 2)
+    {
+        vidmem[i]     = ' ';
+        vidmem[i + 1] = 0x07;
+    }
+}
+
+uint kwrite(const char *message, uint line, uchar colour)
 {
     char *vidmem = VGA_MEM;
 
@@ -73,12 +87,7 @@ uint kinput(const char *message, uint line, char colour, char *buf, uint buf_siz
     kwrite(message, line, colour);
     while (id < buf_size - 1)
     {
-        while (!(inb(0x64) & 0x01));
-        uchar scancode = inb(0x60);
-        if (scancode & 0x80) 
-        {
-            continue;
-        }
+        uchar scancode = kbd_read();
 
         char c = kbd_scancode_to_ascii(scancode);
         if (c == 0)
@@ -119,17 +128,4 @@ uint kinput(const char *message, uint line, char colour, char *buf, uint buf_siz
     }
     buf[id] = '\0';
     return line + 1;
-}
-
-void kscroll()
-{
-    char *vidmem = VGA_MEM;
-    unsigned int i;
-    for (i = 0; i < (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i++)
-        vidmem[i] = vidmem[i + VGA_WIDTH * 2];
-    for (i = (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i < VGA_HEIGHT * VGA_WIDTH * 2; i += 2)
-    {
-        vidmem[i]     = ' ';
-        vidmem[i + 1] = 0x07;
-    }
 }

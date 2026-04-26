@@ -5,12 +5,13 @@
 #include "disk.h"
 #include "cpu.h"
 #include "time.h"
+#include "kprintf.h"
 #include "random.h"
 
 int shell(int line)
 {
     static uint8_t sb_buffer[1024];
-    uchar cmd[256] = {0};
+    char cmd[256] = {0};
     while(1)
     {
         line = kinput("> ", line, WHITE, cmd, 256);
@@ -69,9 +70,10 @@ int shell(int line)
                     line = kwrite("Scroll testing", line, WHITE);
                 }
             }
-            else if ((startswith(cmd, "test -")))
+            else
+            
             {
-
+                line = kwrite("ERROR - test command are: -scroll", line, RED);
             }
         }
         else if (startswith(cmd, "time"))
@@ -86,7 +88,14 @@ int shell(int line)
             uint32_t rnd = krand();
             line = kprintf(line, LIGHT_GREY, "Random: %u", rnd);
         }
-        else
+        else if (startswith(cmd, "help"))
+        {
+            line = kprintf(line, LIGHT_GREY, "--== COMMAND LIST ==--");
+            line = kprintf(line, LIGHT_GREY, "1. help        4. ext2        7. fetch");
+            line = kprintf(line, LIGHT_GREY, "2. time        5. test");
+            line = kprintf(line, LIGHT_GREY, "3. random      6. fetch");
+        }
+        else 
         {
             line = kwrite("ERROR: cmd not found", line, RED);
         }

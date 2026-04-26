@@ -3,6 +3,9 @@
 
 static uint cursor_line = 0;
 
+static uint8_t kbd_buffer[KBD_BUFFER_SIZE];
+static uint8_t kbd_head = 0;
+static uint8_t kbd_tail = 0;
 
 void outb(unsigned short port, unsigned char data)
 {
@@ -86,4 +89,15 @@ void kbd_update(void)
         char str[2] = {c, '\0'};
         cursor_line = kwrite(str, cursor_line, WHITE);
     }
+}
+
+uchar kbd_read(void)
+{
+    while (kbd_head == kbd_tail)
+    {
+        __asm__ volatile ("hlt");
+    }
+    uint8_t sc = kbd_buffer[kbd_tail];
+    kbd_tail = (kbd_tail + 1) % KBD_BUFFER_SIZE;
+    return sc;
 }

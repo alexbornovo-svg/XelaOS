@@ -1,13 +1,14 @@
-#ifndef KBD_H
-#define KBD_H
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
+
+#define KBD_BUFFER_SIZE 64
+
 #include "types.h"
 
-void  outb(unsigned short port, unsigned char data);
-uchar inb(unsigned short port);
+void keyboard_init(void);
+void keyboard_irq_handler(void);
 
-char  kbd_scancode_to_ascii(uchar scancode);
-char  kbd_poll(void);
-char  kbd_char_input(void);
-void  kbd_update(void);
+int keyboard_available(void);
+uint8_t keyboard_read_scancode(void);
 
 #endif

@@ -25,7 +25,7 @@
 #define LIGHT_BROWN 0xE
 #define WHITE 0xF
 
-uint kwrite(char *message, uint line, uchar colour);
+uint kwrite(const char *message, uint line, uchar colour);
 void kclear();
 uint kinput(const char *message, uint line, char colour, char *buf, uint buf_size);
 void k_scroll();
