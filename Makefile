@@ -65,7 +65,7 @@ disk:
 	@echo "Formattazione in ext2..."
 	mkfs.ext2 -F $(DISK)
 
-run: $(ISO) $(DISK)
+run_debug: $(ISO) $(DISK)
 	qemu-system-i386 \
 		-drive file=build/XelaOS.iso,format=raw,index=0,media=cdrom \
 		-drive file=build/disk.img,format=raw,index=1,media=disk \
@@ -74,7 +74,14 @@ run: $(ISO) $(DISK)
 		-s -S \
 		-M accel=tcg,smm=off -d int -no-reboot -no-shutdown -D qemu_log.txt
 
+run: $(ISO) $(DISK)
+	qemu-system-i386 \
+		-drive file=$(ISO),format=raw,index=0,media=cdrom \
+		-drive file=$(DISK),format=raw,index=1,media=disk \
+		-boot d
+
+
 clean:
 	rm -rf $(BUILD_DIR)
 
-all_disk: clean disk all run
+all_disk: clean disk all run run_debug

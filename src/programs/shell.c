@@ -10,7 +10,6 @@
 
 int shell(int line)
 {
-    static uint8_t sb_buffer[1024];
     char cmd[256] = {0};
     while(1)
     {

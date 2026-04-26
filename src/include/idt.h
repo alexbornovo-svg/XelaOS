@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define KBD_BUFFER_SIZE 64
+
 extern void isr0(void);  
 extern void isr1(void);  
 extern void isr2(void);

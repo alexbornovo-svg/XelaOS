@@ -19,8 +19,6 @@ void k_main()
     line = kwrite("Searching for disk", line, WHITE);
     line = ext2_init(line);
 
-    __asm__ volatile ("sti");
-
     line++;
     line = kwrite("Welcome to the kernel", line, WHITE);
     shell(line);

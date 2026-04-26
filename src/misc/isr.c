@@ -1,8 +1,8 @@
 #include "types.h"
 #include "kstdio.h"
 #include "kprintf.h"
-
-#define KBD_BUFFER_SIZE 64
+#include "io.h"
+#include "kbd.h"
 
 typedef struct {
     uint32_t edi, esi, ebp, esp;
@@ -21,10 +21,6 @@ static const char *exceptions[] = {
     "x87 FPU Error", "Alignment Check",
     "Machine Check", "SIMD FPU Error"
 };
-
-static uint8_t kbd_buffer[KBD_BUFFER_SIZE];
-static uint8_t kbd_head = 0;
-static uint8_t kbd_tail = 0;
 
 void isr_handler(registers_t *regs)
 {

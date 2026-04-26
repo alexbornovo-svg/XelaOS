@@ -93,7 +93,7 @@ irq_common:
     call irq_handler
     add esp, 4
     popa
-    add esp, 8
+    add esp, 8 
     iret
 
 section .note.GNU-stack noalloc noexec nowrite progbits

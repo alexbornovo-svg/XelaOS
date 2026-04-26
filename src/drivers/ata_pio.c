@@ -1,6 +1,7 @@
 #include "types.h"
 #include "kbd.h"
 #include "kstdio.h"
+#include "io.h"
 #include "string.h"
 #include "ata_pio.h"
 

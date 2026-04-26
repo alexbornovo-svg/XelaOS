@@ -1,11 +1,13 @@
 #include "types.h"
 #include "kstdio.h"
+#include "kbd.h"
+#include "idt.h"
+
+volatile uint8_t kbd_buffer[KBD_BUFFER_SIZE];
+volatile uint8_t kbd_head = 0;
+volatile uint8_t kbd_tail = 0;
 
 static uint cursor_line = 0;
-
-static uint8_t kbd_buffer[KBD_BUFFER_SIZE];
-static uint8_t kbd_head = 0;
-static uint8_t kbd_tail = 0;
 
 void outb(unsigned short port, unsigned char data)
 {
