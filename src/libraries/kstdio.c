@@ -151,3 +151,79 @@ void kscroll()
         vidmem[i + 1] = 0x07;
     }
 }
+
+void cpu_brand(char *buf)
+{
+    unsigned int eax, ebx, ecx, edx;
+    int i, j = 0;
+
+    unsigned int regs[3][4];
+    for (i = 0; i < 3; i++)
+    {
+        eax = 0x80000002 + i;
+        __asm__ volatile (
+            "cpuid"
+            : "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
+            : "a"(eax)
+        );
+        regs[i][0] = eax;
+        regs[i][1] = ebx;
+        regs[i][2] = ecx;
+        regs[i][3] = edx;
+    }
+
+    for (i = 0; i < 3; i++)
+    {
+        int k;
+        for (k = 0; k < 4; k++)
+        {
+            unsigned int r = regs[i][k];
+            buf[j++] = (r      ) & 0xFF;
+            buf[j++] = (r >>  8) & 0xFF;
+            buf[j++] = (r >> 16) & 0xFF;
+            buf[j++] = (r >> 24) & 0xFF;
+        }
+    }
+    buf[j] = '\0';
+}
+
+void get_disk_usage(ext2_superblock_t *sb, uint32_t *free_mb, uint32_t *total_mb) {
+    uint32_t block_size_kb = (1024 << sb->log_block_size) / 1024;
+
+    *free_mb = (sb->free_blocks_count * block_size_kb) / 1024;
+    *total_mb = (sb->blocks_count * block_size_kb) / 1024;
+}
+
+void itoa(uint32_t n, char *str) {
+    char temp[12];
+    int i = 0;
+
+    if (n == 0) {
+        str[i++] = '0';
+        str[i] = '\0';
+        return;
+    }
+
+    while (n > 0) {
+        temp[i++] = (n % 10) + '0';
+        n /= 10;
+    }
+
+    int j;
+    for (j = 0; j < i; j++) {
+        str[j] = temp[i - 1 - j];
+    }
+    str[i] = '\0';
+}
+
+void kstrcat(char *dst, const char *src)
+{
+    while (*dst) dst++;
+    while (*src) *dst++ = *src++;
+    *dst = '\0';
+}
+
+void kmemcpy(uint8_t *dst, const uint8_t *src, uint32_t n)
+{
+    while (n--) *dst++ = *src++;
+}

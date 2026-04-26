@@ -1,9 +1,9 @@
 # Output di compilazione
-./build/
+build/
 iso/boot/kernel.elf
 
 # Editor
-./.vscode/
+.vscode/
 
 # File temporanei
 *.o

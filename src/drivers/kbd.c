@@ -3,6 +3,12 @@
 
 static uint cursor_line = 0;
 
+
+void outb(unsigned short port, unsigned char data)
+{
+    __asm__ volatile ("outb %0, %1" : : "a"(data), "Nd"(port));
+}
+
 uchar inb(unsigned short port)
 {
     uchar result;
