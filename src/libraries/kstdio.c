@@ -12,9 +12,9 @@ void kscroll()
 {
     char *vidmem = VGA_MEM;
     unsigned int i;
-    for (i = 0; i < (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i++)
+    for (i = 0; i < 23 * VGA_WIDTH * 2; i++)
         vidmem[i] = vidmem[i + VGA_WIDTH * 2];
-    for (i = (VGA_HEIGHT - 1) * VGA_WIDTH * 2; i < VGA_HEIGHT * VGA_WIDTH * 2; i += 2)
+    for (i = 23 * VGA_WIDTH * 2; i < 24 * VGA_WIDTH * 2; i += 2)
     {
         vidmem[i]     = ' ';
         vidmem[i + 1] = 0x07;
@@ -24,23 +24,21 @@ void kscroll()
 uint kwrite(const char *message, uint line, uchar colour)
 {
     char *vidmem = VGA_MEM;
-
-    if (line >= VGA_HEIGHT)
+    if (line >= 24)  // riga 24 riservata alla statusbar
     {
         kscroll();
-        line = VGA_HEIGHT - 1;
+        line = 23;
     }
     unsigned int i = line * VGA_WIDTH * 2;
-
     while (*message != '\0')
     {
         if (*message == '\n')
         {
             line++;
-            if (line >= VGA_HEIGHT)
+            if (line >= 24)
             {
                 kscroll();
-                line = VGA_HEIGHT - 1;
+                line = 23;
             }
             i = line * VGA_WIDTH * 2;
         }

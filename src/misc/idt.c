@@ -105,6 +105,12 @@ void idt_init()
     */
     __asm__ volatile ("lidt (%0)" : : "r" (&idt_ptr));
     __asm__ volatile ("sti");
-    port_byte_out(0x21, 0xFD);
-    port_byte_out(0xA1, 0xFF);
+
+    uint16_t divisor = 11931;
+    port_byte_out(0x43, 0x36);
+    port_byte_out(0x40, divisor & 0xFF); 
+    port_byte_out(0x40, (divisor >> 8) & 0xFF);
+
+    port_byte_out(0x21, 0xFC); 
+    port_byte_out(0xA1, 0xFF); 
 }

@@ -88,4 +88,11 @@ run: $(ISO) $(DISK)
 clean:
 	rm -rf $(BUILD_DIR)
 
+all_run:
+	make clean
+	make disk
+	make 
+	make run
+
+
 all_disk: clean disk all run run_debug

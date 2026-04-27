@@ -7,6 +7,9 @@ volatile uint8_t kbd_buffer[KBD_BUFFER_SIZE];
 volatile uint8_t kbd_head = 0;
 volatile uint8_t kbd_tail = 0;
 
+uint8_t kbd_ctrl  = 0;
+uint8_t kbd_altgr = 0;
+
 static uint cursor_line = 0;
 
 void outb(unsigned short port, unsigned char data)
@@ -44,6 +47,20 @@ static char keymap_ita[128] = {
  /* 0x38 */ 0,           /* ALT            */
  /* 0x39 */ ' ',
 };
+
+static const char sc_map[] = {
+    0, 0, '1','2','3','4','5','6','7','8','9','0','-','=', 0,
+    0, 'q','w','e','r','t','y','u','i','o','p','[',']', 0,
+    0, 'a','s','d','f','g','h','j','k','l',';','\'','`',
+    0,'\\','z','x','c','v','b','n','m',',','.','/', 0,
+    '*', 0, ' '
+};
+
+char sc_to_char(uint8_t sc)
+{
+    if (sc < sizeof(sc_map)) return sc_map[sc];
+    return 0;
+}
 
 char kbd_scancode_to_ascii(uchar scancode)
 {
@@ -97,6 +114,21 @@ void kbd_update(void)
         char str[2] = {c, '\0'};
         cursor_line = kwrite(str, cursor_line, WHITE);
     }
+}
+
+uint8_t kbd_getchar(void)
+{
+    if (kbd_tail == kbd_head) return 0;
+    uint8_t sc = kbd_buffer[kbd_tail];
+    kbd_tail = (kbd_tail + 1) % KBD_BUFFER_SIZE;
+    return sc;
+}
+
+void kbd_flush(void)
+{
+    kbd_head = kbd_tail = 0;
+    kbd_ctrl  = 0;
+    kbd_altgr = 0;
 }
 
 uchar kbd_read(void)

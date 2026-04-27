@@ -6,13 +6,15 @@
 #include "time.h"
 #include "gdt.h"
 #include "idt.h"
+#include "statusbar.h"
 
 void k_main()
 {
     uint line = 0;
     gdt_init();
     kclear();
-    idt_init(); // NON FUNZIONA PER ORA
+    idt_init();
+    statusbar_update("Terminal", 1, WHITE, BLUE);
 
     cmos_time_t t;
     cmos_read(&t);

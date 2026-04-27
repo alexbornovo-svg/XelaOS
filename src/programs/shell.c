@@ -7,6 +7,7 @@
 #include "time.h"
 #include "kprintf.h"
 #include "random.h"
+#include "xte.h"
 
 int shell(int line)
 {
@@ -87,11 +88,18 @@ int shell(int line)
             uint32_t rnd = krand();
             line = kprintf(line, LIGHT_GREY, "Random: %u", rnd);
         }
+        else if (startswith(cmd, "xte"))
+        {
+            xte_terminal();
+            kclear();
+            statusbar_update("Terminal", 1, WHITE, BLUE);
+            line = 0;
+        }
         else if (startswith(cmd, "help"))
         {
             line = kprintf(line, LIGHT_GREY, "--== COMMAND LIST ==--");
             line = kprintf(line, LIGHT_GREY, "1. help        4. ext2        7. fetch");
-            line = kprintf(line, LIGHT_GREY, "2. time        5. test");
+            line = kprintf(line, LIGHT_GREY, "2. time        5. test        8. xte");
             line = kprintf(line, LIGHT_GREY, "3. random      6. fetch");
         }
         else 
